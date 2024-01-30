@@ -15,7 +15,7 @@ class Qwerty extends WebhookHandler
 $info = $this->chat->info();
 $username = $info['first_name'] ?? 'Unknown';
     $this->chat->html("Привіт $username")->send();
-    Log::info($info);
+//    Log::info($info);
 
 }
     public function hello(string $name): void

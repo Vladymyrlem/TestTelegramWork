@@ -21,10 +21,10 @@ Route::get('/', function () {
 Route::get('/test-webhook', [TelegramBotController::class, 'handle']);
 
 Route::group(['middleware' => ['web']], function () {
-    Route::post('/trello-webhook', [TelegramBotController::class, 'handleWebhook']);
+    Route::post('/trello-webhook', [TelegramBotController::class, 'handleWebhook'])->name('trello-webhook');
     Route::get('/trello-webhook', [TelegramBotController::class, 'handleWebhook']);
     Route::post('/webhook', [TrelloWebhookController::class, 'handleWebhook']);
     Route::get('/webhook', [TrelloWebhookController::class, 'handleWebhook']);
     Route::get('/test-send-telegram-message', [TrelloWebhookController::class, 'testSendTelegramMessage']);
-
+    Route::get('/webhook-run', [TrelloWebhookController::class, 'registerWebhook']);
 });

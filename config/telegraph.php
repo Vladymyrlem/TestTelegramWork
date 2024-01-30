@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Telegraph\MyHandler;
 use DefStudio\Telegraph\Telegraph;
 
 return [
@@ -80,7 +81,12 @@ return [
         'bot' => DefStudio\Telegraph\Models\TelegraphBot::class,
         'chat' => DefStudio\Telegraph\Models\TelegraphChat::class,
     ],
-
+    'handlers' => [
+        'MyHandler' => MyHandler::class,
+    ],
+    'webhook' => [
+        'route' => 'telegram',
+    ],
     'storage' => [
         /**
          * Default storage driver to be used for Telegraph data

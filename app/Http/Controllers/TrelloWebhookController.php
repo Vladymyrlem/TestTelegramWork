@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\TelegramUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use DefStudio\Telegraph\Models\TelegraphChat;
 
 class TrelloWebhookController extends Controller
 {
+
     public function handleWebhook(Request $request)
     {
         $data = json_decode($request->getContent(), true);
@@ -25,7 +27,7 @@ class TrelloWebhookController extends Controller
                 $this->sendTelegramMessage("Карточка $cardId переміщена з $listBefore в $listAfter");
 
                 // Пошук та збереження інформації про користувача, який викликав команду "/start"
-                $this->saveUserFromStartCommand($data);
+//                $this->saveUserFromStartCommand($data);
             }
         }
 
@@ -47,7 +49,15 @@ class TrelloWebhookController extends Controller
             && isset($data['action']['data']['listAfter'])
             && isset($data['action']['data']['listBefore']);
     }
+    public function testSendTelegramMessage()
+    {
+        $message = "Це тестове повідомлення від Laravel до Telegram!";
 
+        // Викликайте метод sendTelegramMessage з тестовим повідомленням
+        $this->sendTelegramMessage($message);
+
+        return response()->json(['success' => true, 'message' => 'Тестове повідомлення відправлено до Telegram.']);
+    }
     private function sendTelegramMessage($message)
     {
         // Ваш код відправлення повідомлення в Telegram
@@ -79,5 +89,24 @@ class TrelloWebhookController extends Controller
             // Відправлення повідомлення в Telegram про успішне збереження користувача
             $this->sendTelegramMessage("Користувач $firstName збережений в базі даних.");
         }
+    }
+    public function registerWebhook()
+    {
+        $apiKey = env('TRELLO_API_KEY');
+        $apiToken = env('TRELLO_API_TOKEN');
+        $callbackUrl = route('trello-webhook');
+        $boardId = env('TRELLO_BOARD_ID'); // Замініть на конкретний ідентифікатор вашої дошки
+
+        $response = Http::post("https://api.trello.com/1/tokens/{$apiToken}/webhooks", [
+            'key' => $apiKey,
+            'token' => $apiToken,
+            'callbackURL' => $callbackUrl,
+            'idModel' => $boardId,
+        ]);
+
+        $webhook = $response->json();
+
+        // Обробка відповіді від Trello, наприклад, повернення інформації про новий webhook
+        return response()->json($webhook);
     }
 }

@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Facades\Http; @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -136,5 +137,20 @@
                 </div>
             </div>
         </div>
+{{--    @php--}}
+{{--        $apiKey = env('TRELLO_API_KEY');--}}
+{{--          $apiToken = env('TRELLO_API_TOKEN');--}}
+{{--          $callbackUrl = route('trello-webhook');--}}
+{{--          $boardId = env('TRELLO_BOARD_ID'); // Замініть на конкретний ідентифікатор вашої дошки--}}
+{{--          $response = Http::post("https://api.trello.com/1/tokens/{$apiToken}/webhooks", [--}}
+{{--              'key' => $apiKey,--}}
+{{--              'callbackURL' => $callbackUrl,--}}
+{{--              'token' => $apiToken,--}}
+{{--              'idModel' => $boardId,--}}
+{{--              // Додайте інші параметри, які вам потрібні для реєстрації webhook--}}
+{{--          ]);--}}
+{{--$data = json_decode($response, true);--}}
+{{--        dd($data);--}}
+{{--        @endphp--}}
     </body>
 </html>

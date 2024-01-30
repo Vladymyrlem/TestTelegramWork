@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Telegraph\Qwerty;
 use DefStudio\Telegraph\Facades\Telegraph;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -11,9 +12,20 @@ class TelegramBotController extends Controller
 {
     public function handleWebhook(Request $request)
     {
+        $apiKey = env('TRELLO_API_KEY');
+        $apiToken = env('TRELLO_API_TOKEN');
+        $callbackUrl = route('trello-webhook');
+        $boardId = env('TRELLO_BOARD_ID'); // Замініть на конкретний ідентифікатор вашої дошки
+        $response = Http::post("https://api.trello.com/1/tokens/{$apiToken}/webhooks", [
+            'key' => $apiKey,
+            'callbackURL' => $callbackUrl,
+            'token' => $apiToken,
+            'idModel' => $boardId,
+            // Додайте інші параметри, які вам потрібні для реєстрації webhook
+        ]);
         // Get the raw content of the request
-        $data = json_decode($request->getContent(), true);
-
+        $data = json_decode($response, true);
+        dd($data);
         // Log received data
         \Illuminate\Support\Facades\Log::info('Received data:', ['data' => $data]);
 
@@ -23,7 +35,7 @@ class TelegramBotController extends Controller
         // ... existing code ...
 
         // Process incoming Telegram update data here
-        if (isset($decodedData['message']['text'])) {
+//        if (isset($decodedData['message']['text'])) {
             $messageText = $decodedData['message']['text'];
             $chatId = $decodedData['message']['chat']['id'];
             $firstName = $decodedData['message']['from']['first_name'];
@@ -32,28 +44,30 @@ class TelegramBotController extends Controller
             \Illuminate\Support\Facades\Log::info("Received message: $messageText from $firstName in chat $chatId");
 
             // Check if the user sent the "/start" command
-            if ($messageText === '/start') {
+//            if ($messageText === '/test') {
                 // Compose the greeting message with the user's name
                 $greetingMessage = "Hello, {$firstName}! Welcome to your Telegram bot.";
 
                 // Log the greeting message
                 \Illuminate\Support\Facades\Log::info("Sending greeting message: $greetingMessage");
-
+//                $qwertyHandler = new Qwerty();
+//                $qwertyHandler->start();
                 // Send the greeting message back to the user
-                $this->sendTelegramMessage($chatId, $greetingMessage);
-            }
-        }
+                $this->sendTelegramMessage($greetingMessage);
+//            }
+//        }
 
         // Log successful response to the Telegram API
         \Illuminate\Support\Facades\Log::info('Sending successful response to Telegram API');
-
         // Return a successful response to the Telegram API
         return response()->json(['success' => true, 'status' => 'ok']);
     }
 
-    private function sendTelegramMessage($chatId, $message)
+    private function sendTelegramMessage($message)
     {
+        // Ваш код відправлення повідомлення в Telegram
         $botToken = env('TELEGRAM_BOT_TOKEN');
+        $chatId = env('TELEGRAM_GROUP_CHAT_ID');
 
         $response = Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
             'chat_id' => $chatId,
